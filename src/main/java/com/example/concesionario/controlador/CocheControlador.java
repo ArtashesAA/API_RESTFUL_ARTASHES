@@ -16,42 +16,47 @@ import com.example.concesionario.entidad.Coche;
 import com.example.concesionario.repositorio.CocheRepositorio;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/coches")
 public class CocheControlador {
 
 	@Autowired
 	private CocheRepositorio cocheRepositorio;
-	
+
 	@GetMapping
-    public List<Coche> getAllCoches() {
-        return cocheRepositorio.findAll();
-    }
+	public List<Coche> getAllCoches() {
+		return cocheRepositorio.findAll();
+	}
 
-    @GetMapping("/{id}")
-    public Coche getCocheById(@PathVariable Long id) {
-        return cocheRepositorio.findById(id).orElse(null);
-    }
+	@GetMapping("/{id}")
+	public Coche getCocheById(@PathVariable Long id) {
+		return cocheRepositorio.findById(id).orElse(null);
+	}
 
-    @PostMapping
-    public Coche addCoche(@RequestBody Coche coche) {
-        return cocheRepositorio.save(coche);
-    }
+	@PostMapping
+	public Coche addCoche(@RequestBody Coche coche) {
+		return cocheRepositorio.save(coche);
+	}
 
-    @PutMapping("/{id}")
-    public Coche updateCoche(@PathVariable Long id, @RequestBody Coche nuevoCoche) {
-        Coche cocheExistente = cocheRepositorio.findById(id).orElse(null);
-        if (cocheExistente != null) {
-        	cocheExistente.setMarca(nuevoCoche.getMarca());
-        	cocheExistente.setModelo(nuevoCoche.getModelo());
-        	cocheExistente.setAnyo(nuevoCoche.getAnyo());
-        	cocheExistente.setKilometros(nuevoCoche.getKilometros());
-            return cocheRepositorio.save(cocheExistente);
-        }
-        return null;
-    }
+	@PutMapping("/{id}")
+	public Coche updateCoche(@PathVariable Long id, @RequestBody Coche nuevoCoche) {
+		Coche cocheExistente = cocheRepositorio.findById(id).orElse(null);
+		if (cocheExistente != null) {
+			cocheExistente.setMarca(nuevoCoche.getMarca());
+			cocheExistente.setModelo(nuevoCoche.getModelo());
+			cocheExistente.setAnyo(nuevoCoche.getAnyo());
+			cocheExistente.setKilometraje(nuevoCoche.getKilometraje());
+			cocheExistente.setPeso(nuevoCoche.getPeso());
+			cocheExistente.setColor(nuevoCoche.getColor());
+			cocheExistente.setPrecio(nuevoCoche.getPrecio());
+			cocheExistente.setDescripcion(nuevoCoche.getDescripcion());
 
-    @DeleteMapping("/{id}")
-    public void deleteCoche(@PathVariable Long id) {
-        cocheRepositorio.deleteById(id);
-    }
+			return cocheRepositorio.save(cocheExistente);
+		}
+		return null;
+	}
+
+	@DeleteMapping("/{id}")
+	public void deleteCoche(@PathVariable Long id) {
+		cocheRepositorio.deleteById(id);
+	}
 }

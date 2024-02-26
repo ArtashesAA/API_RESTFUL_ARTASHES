@@ -13,13 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-
+ 
 import com.example.concesionario.repositorio.CocheRepositorio;
+import org.springframework.http.MediaType;  
 
 @WebMvcTest(CocheControlador.class)
 public class CocheControladorTest {
 
-	@Autowired
+    @Autowired
     private MockMvc mockMvc;
 
     @MockBean
@@ -32,7 +33,8 @@ public class CocheControladorTest {
     public void testObtenerTodosLosCoches() throws Exception {
         when(cocheRepositorio.findAll()).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/api/coches"))
+        mockMvc.perform(get("/coches")
+                .contentType(MediaType.APPLICATION_JSON)) 
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
     }

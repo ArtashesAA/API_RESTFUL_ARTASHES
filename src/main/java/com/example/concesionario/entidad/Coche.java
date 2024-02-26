@@ -23,19 +23,52 @@ public class Coche {
 	@NotNull(message = "El año no puede ser nulo")
 	private Integer anyo;
 
-	@NotNull(message = "Los kilómetros no pueden ser nulos")
-	private Integer kilometros;
+	@NotNull(message = "La potencia no puede ser nula")
+	private Integer potencia;
+
+	@NotNull(message = "El kilómetraje no pueden ser nulo")
+	private Integer kilometraje;
+
+	@NotNull(message = "El peso no pueden ser nulo")
+	private Integer peso;
+
+	@NotNull(message = "El combustible no pueden ser nulo")
+	private enum combustible {
+		Gasolina, Diesel, Hibrido, Electrico
+	};
+
+	@NotNull(message = "El color no pueden ser nulo")
+	private String color;
+
+	@NotNull(message = "El precio no pueden ser nulo")
+	private Integer precio;
+
+	@NotNull(message = "La descripcion no pueden estar vacío")
+	private String descripcion;
 
 	public Coche() {
 
 	}
 
-	public Coche(Long id, String marca, String modelo, Integer anyo, Integer kilometros) {
+	public Coche(Long id, @NotBlank(message = "La marca no puede estar en blanco") String marca,
+			@NotBlank(message = "El modelo no puede estar en blanco") String modelo,
+			@NotNull(message = "El año no puede ser nulo") Integer anyo,
+			@NotNull(message = "La potencia no puede ser nula") Integer potencia,
+			@NotNull(message = "El kilómetraje no pueden ser nulo") Integer kilometraje,
+			@NotNull(message = "El peso no pueden ser nulo") Integer peso,
+			@NotNull(message = "El color no pueden ser nulo") String color,
+			@NotNull(message = "El precio no pueden ser nulo") Integer precio,
+			@NotNull(message = "La descripcion no pueden estar vacío") String descripcion) {
 		this.id = id;
 		this.marca = marca;
 		this.modelo = modelo;
 		this.anyo = anyo;
-		this.kilometros = kilometros;
+		this.potencia = potencia;
+		this.kilometraje = kilometraje;
+		this.peso = peso;
+		this.color = color;
+		this.precio = precio;
+		this.descripcion = descripcion;
 	}
 
 	public Long getId() {
@@ -70,17 +103,60 @@ public class Coche {
 		this.anyo = anyo;
 	}
 
-	public Integer getKilometros() {
-		return kilometros;
+	public Integer getPotencia() {
+		return potencia;
 	}
 
-	public void setKilometros(Integer kilometros) {
-		this.kilometros = kilometros;
+	public void setPotencia(Integer potencia) {
+		this.potencia = potencia;
+	}
+
+	public Integer getKilometraje() {
+		return kilometraje;
+	}
+
+	public void setKilometraje(Integer kilometraje) {
+		this.kilometraje = kilometraje;
+	}
+
+	public Integer getPeso() {
+		return peso;
+	}
+
+	public void setPeso(Integer peso) {
+		this.peso = peso;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public Integer getPrecio() {
+		return precio;
+	}
+
+	public void setPrecio(Integer precio) {
+		this.precio = precio;
 	}
 
 	@Override
 	public String toString() {
 		return "Coche [getId()=" + getId() + ", getMarca()=" + getMarca() + ", getModelo()=" + getModelo()
-				+ ", getAnyo()=" + getAnyo() + ", getKilometros()=" + getKilometros() + "]";
+				+ ", getAnyo()=" + getAnyo() + ", getPotencia()=" + getPotencia() + ", getKilometraje()="
+				+ getKilometraje() + ", getPeso()=" + getPeso() + ", getColor()=" + getColor() + ", getDescripcion()="
+				+ getDescripcion() + ", getPrecio()=" + getPrecio() + "]";
 	}
+
 }
