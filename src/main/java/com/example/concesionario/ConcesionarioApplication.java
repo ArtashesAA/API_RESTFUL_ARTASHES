@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 
-@SpringBootApplication(exclude = { SecurityAutoConfiguration.class, UserDetailsServiceAutoConfiguration.class })
+@SpringBootApplication
 public class ConcesionarioApplication {
 
 	public static void main(String[] args) {

@@ -1,41 +1,97 @@
 package com.example.concesionario.controlador;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Collections;
-
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
- 
+import com.example.concesionario.ConcesionarioApplication;
+import com.example.concesionario.entidad.Coche;
 import com.example.concesionario.repositorio.CocheRepositorio;
-import org.springframework.http.MediaType;  
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-@WebMvcTest(CocheControlador.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@SpringBootTest(classes = ConcesionarioApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CocheControladorTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @LocalServerPort
+    private int port;
 
-    @MockBean
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Autowired
     private CocheRepositorio cocheRepositorio;
 
-    @InjectMocks
-    private CocheControlador cocheControlador;
+    @Test
+    public void pruebaObtenerTodosLosCoches() {
+        ResponseEntity<Coche[]> respuesta = restTemplate.getForEntity("http://localhost:" + port + "/coches", Coche[].class);
+        assertEquals(HttpStatus.OK, respuesta.getStatusCode());
+        assertNotNull(respuesta.getBody());
+    }
 
     @Test
-    public void testObtenerTodosLosCoches() throws Exception {
-        when(cocheRepositorio.findAll()).thenReturn(Collections.emptyList());
+    public void pruebaObtenerCochePorId() {
+        // Supongamos que hay un coche con ID 1 en la base de datos
+        Long idCocheExistente = 1L;
+        ResponseEntity<Coche> respuesta = restTemplate.getForEntity("http://localhost:" + port + "/coches/" + idCocheExistente, Coche.class);
+        assertEquals(HttpStatus.OK, respuesta.getStatusCode());
+        assertNotNull(respuesta.getBody());
+        assertEquals(idCocheExistente, respuesta.getBody().getId());
+    }
 
-        mockMvc.perform(get("/coches")
-                .contentType(MediaType.APPLICATION_JSON)) 
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isEmpty());
+    @Test
+    public void pruebaCrearCoche() {
+    	 Coche nuevoCoche = new Coche(1L, "NuevoCoche", "Modelo", 2022, 150, 50000, 1500, "Gasolina", "Blanco", 25000, "Descripcion");
+    	    ResponseEntity<Coche> respuesta = restTemplate.postForEntity("http://localhost:" + port + "/coches", nuevoCoche, Coche.class);
+    	    assertEquals(HttpStatus.CREATED, respuesta.getStatusCode());  // Cambiado a CREATED
+    	    assertNotNull(respuesta.getBody());
+    	    assertEquals(nuevoCoche.getModelo(), respuesta.getBody().getModelo());
+
+    	    // Limpieza: Elimina el coche creado durante la prueba
+    	    cocheRepositorio.deleteById(respuesta.getBody().getId());
+    }
+
+    @Test
+    public void pruebaActualizarCoche() {
+        // Supongamos que hay un coche con ID 1 en la base de datos
+        Long idCocheExistente = 1L;
+        ResponseEntity<Coche> respuestaExistente = restTemplate.getForEntity("http://localhost:" + port + "/coches/" + idCocheExistente, Coche.class);
+        assertEquals(HttpStatus.OK, respuestaExistente.getStatusCode());
+        assertNotNull(respuestaExistente.getBody());
+
+        // Modifica el coche existente
+        Coche cocheModificado = respuestaExistente.getBody();
+        cocheModificado.setModelo("CocheModificado");
+        HttpEntity<Coche> entidadModificada = new HttpEntity<>(cocheModificado);
+        ResponseEntity<Coche> respuestaModificada = restTemplate.exchange(
+                "http://localhost:" + port + "/coches/" + idCocheExistente,
+                HttpMethod.PUT,
+                entidadModificada,
+                Coche.class);
+
+        assertEquals(HttpStatus.OK, respuestaModificada.getStatusCode());
+        assertNotNull(respuestaModificada.getBody());
+        assertEquals(cocheModificado.getModelo(), respuestaModificada.getBody().getModelo());
+    }
+
+    @Test
+    public void pruebaEliminarCoche() {
+        // Supongamos que hay un coche con ID 1 en la base de datos
+        Long idCocheExistente = 1L;
+
+        // Intenta eliminar el coche
+        ResponseEntity<Void> respuesta = restTemplate.exchange(
+                "http://localhost:" + port + "/coches/" + idCocheExistente,
+                HttpMethod.DELETE,
+                null,
+                Void.class);
+
+        assertEquals(HttpStatus.OK, respuesta.getStatusCode());
     }
 }

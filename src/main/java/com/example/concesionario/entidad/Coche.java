@@ -33,9 +33,7 @@ public class Coche {
 	private Integer peso;
 
 	@NotNull(message = "El combustible no pueden ser nulo")
-	private enum combustible {
-		Gasolina, Diesel, Hibrido, Electrico
-	};
+	private String combustible;
 
 	@NotNull(message = "El color no pueden ser nulo")
 	private String color;
@@ -56,6 +54,7 @@ public class Coche {
 			@NotNull(message = "La potencia no puede ser nula") Integer potencia,
 			@NotNull(message = "El kilómetraje no pueden ser nulo") Integer kilometraje,
 			@NotNull(message = "El peso no pueden ser nulo") Integer peso,
+			@NotNull(message = "El combustible no pueden ser nulo") String combustible,
 			@NotNull(message = "El color no pueden ser nulo") String color,
 			@NotNull(message = "El precio no pueden ser nulo") Integer precio,
 			@NotNull(message = "La descripcion no pueden estar vacío") String descripcion) {
@@ -66,6 +65,7 @@ public class Coche {
 		this.potencia = potencia;
 		this.kilometraje = kilometraje;
 		this.peso = peso;
+		this.combustible = combustible;
 		this.color = color;
 		this.precio = precio;
 		this.descripcion = descripcion;
@@ -127,6 +127,14 @@ public class Coche {
 		this.peso = peso;
 	}
 
+	public String getCombustible() {
+		return combustible;
+	}
+
+	public void setCombustible(String combustible) {
+		this.combustible = combustible;
+	}
+
 	public String getColor() {
 		return color;
 	}
@@ -155,8 +163,9 @@ public class Coche {
 	public String toString() {
 		return "Coche [getId()=" + getId() + ", getMarca()=" + getMarca() + ", getModelo()=" + getModelo()
 				+ ", getAnyo()=" + getAnyo() + ", getPotencia()=" + getPotencia() + ", getKilometraje()="
-				+ getKilometraje() + ", getPeso()=" + getPeso() + ", getColor()=" + getColor() + ", getDescripcion()="
-				+ getDescripcion() + ", getPrecio()=" + getPrecio() + "]";
+				+ getKilometraje() + ", getPeso()=" + getPeso() + ", getCombustible()=" + getCombustible()
+				+ ", getColor()=" + getColor() + ", getDescripcion()=" + getDescripcion() + ", getPrecio()="
+				+ getPrecio() + "]";
 	}
 
 }
