@@ -26,6 +26,22 @@ public class ReqRes {
 	private List<Coche> coches;
 	private Usuario usuarios;
 
+	public ReqRes() {
+
+	}
+
+	public ReqRes(String email, String password) {
+		this.email = email;
+		this.password = password;
+	}
+
+	public ReqRes(String name, String password, String message, String token) {
+		this.name = name;
+		this.password = password;
+		this.message = message;
+		this.token = token;
+	}
+
 	public int getStatusCode() {
 		return statusCode;
 	}

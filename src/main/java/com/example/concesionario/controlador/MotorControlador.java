@@ -20,36 +20,60 @@ import com.example.concesionario.repositorio.MotorRepositorio;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/motores")
+@RequestMapping("/api/v1/motor")
 public class MotorControlador {
 
 	@Autowired
 	private MotorRepositorio motorRepositorio;
 
-	//Recupera los motores de la bbdd. Puede acceder cualquier rol
+	/*
+	 * Recupera todos los motores. Puede acceder cualquier rol
+	 * 
+	 * @return recupera todos los motores
+	 */
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@GetMapping
 	public List<Motor> obtenerTodosLosMotores() {
 		return motorRepositorio.findAll();
 	}
 
-	//Recupera un motor por id de la bbdd. Puede acceder cualquier rol
+	/*
+	 * Recupera un motor por id. Puede acceder cualquier rol
+	 * 
+	 * @Parameter id de motor que se va a buscar
+	 * 
+	 * @return recupera el motor por id
+	 */
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@GetMapping("/{id}")
 	public ResponseEntity<Motor> obtenerMotorPorId(@PathVariable Long id) {
 		return motorRepositorio.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
 
-	//Añade un coche a la bbdd. Puede acceder solo el admin
+	/*
+	 * Añade un motor a la bbdd. Puede acceder solo el admin
+	 * 
+	 * @Parameter motor que se va a añadir
+	 * 
+	 * @return guarda el motor pasado por parámetro
+	 */
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
 	public Motor crearMotor(@Valid @RequestBody Motor motor) {
-		
-		//Guarda el motor que se le pasa por parámetro
+
 		return motorRepositorio.save(motor);
 	}
 
-	//Actualiza un motor de la bbdd. Puede acceder solo el admin
+	/*
+	 * Actualiza un motor de la bbdd. Puede acceder solo el admin
+	 * 
+	 * @Parameter id del motor que se quiere actualizar
+	 * 
+	 * @Parameter motorActualizado que contiene los datos del motor nuevo que va a
+	 * sustituir al otro
+	 * 
+	 * @return actualiza el motor pasado por parámetro
+	 */
 	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/{id}")
 	public ResponseEntity<Motor> actualizarMotor(@PathVariable Long id, @Valid @RequestBody Motor motorActualizado) {
@@ -58,17 +82,19 @@ public class MotorControlador {
 			motorExistente.setAnyoFabricacion(motorActualizado.getAnyoFabricacion());
 			motorExistente.setConsumo(motorActualizado.getConsumo());
 			motorExistente.setVidaUtil(motorActualizado.getVidaUtil());
-			
-			//Una vez que se han introducido los parametros, se guarda
+
 			return ResponseEntity.ok(motorRepositorio.save(motorExistente));
 		}).orElse(ResponseEntity.notFound().build());
 	}
 
-	//Borra un motor de la bbdd. Puede acceder solo el admin
+	/*
+	 * Borra un motor a la bbdd. Puede acceder solo el admin
+	 * 
+	 * @Parameter id del motor que se quiere borrar
+	 */
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> eliminarMotor(@PathVariable Long id) {
-		//Si se encuentra el motor por su id, se borra
 		return motorRepositorio.findById(id).map(motor -> {
 			motorRepositorio.delete(motor);
 			return ResponseEntity.ok().build();

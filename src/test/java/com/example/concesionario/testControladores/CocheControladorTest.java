@@ -1,4 +1,4 @@
-package com.example.concesionario.controlador;
+package com.example.concesionario.testControladores;
 
 import com.example.concesionario.ConcesionarioApplication;
 import com.example.concesionario.entidad.Coche;
@@ -30,16 +30,16 @@ public class CocheControladorTest {
 
     @Test
     public void pruebaObtenerTodosLosCoches() {
-        ResponseEntity<Coche[]> respuesta = restTemplate.getForEntity("http://localhost:" + port + "/coches", Coche[].class);
+        ResponseEntity<Coche[]> respuesta = restTemplate.getForEntity("http://localhost:" + port + "/api/v1/coche", Coche[].class);
         assertEquals(HttpStatus.OK, respuesta.getStatusCode());
         assertNotNull(respuesta.getBody());
     }
 
     @Test
     public void pruebaObtenerCochePorId() {
-        // Supongamos que hay un coche con ID 1 en la base de datos
+        // Coche con ID 1
         Long idCocheExistente = 1L;
-        ResponseEntity<Coche> respuesta = restTemplate.getForEntity("http://localhost:" + port + "/coches/" + idCocheExistente, Coche.class);
+        ResponseEntity<Coche> respuesta = restTemplate.getForEntity("http://localhost:" + port + "/api/v1/coche/" + idCocheExistente, Coche.class);
         assertEquals(HttpStatus.OK, respuesta.getStatusCode());
         assertNotNull(respuesta.getBody());
         assertEquals(idCocheExistente, respuesta.getBody().getId());
@@ -47,21 +47,21 @@ public class CocheControladorTest {
 
     @Test
     public void pruebaCrearCoche() {
-    	 Coche nuevoCoche = new Coche(1L, "NuevoCoche", "Modelo", 2022, 150, 50000, 1500, "Gasolina", "Blanco", 25000, "Descripcion");
-    	    ResponseEntity<Coche> respuesta = restTemplate.postForEntity("http://localhost:" + port + "/coches", nuevoCoche, Coche.class);
-    	    assertEquals(HttpStatus.CREATED, respuesta.getStatusCode());  // Cambiado a CREATED
-    	    assertNotNull(respuesta.getBody());
-    	    assertEquals(nuevoCoche.getModelo(), respuesta.getBody().getModelo());
+        Coche nuevoCoche = new Coche(1L, "NuevoCoche", "Modelo", 2022, 150, 50000, 1500, "Gasolina", "Blanco", 25000, "Descripcion");
+        ResponseEntity<Coche> respuesta = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/coche", nuevoCoche, Coche.class);
+        assertEquals(HttpStatus.CREATED, respuesta.getStatusCode());
+        assertNotNull(respuesta.getBody());
+        assertEquals(nuevoCoche.getModelo(), respuesta.getBody().getModelo());
 
-    	    // Limpieza: Elimina el coche creado durante la prueba
-    	    cocheRepositorio.deleteById(respuesta.getBody().getId());
+        // Elimina el coche creado durante la prueba
+        cocheRepositorio.deleteById(respuesta.getBody().getId());
     }
 
     @Test
     public void pruebaActualizarCoche() {
-        // Supongamos que hay un coche con ID 1 en la base de datos
+    	// Coche con ID 1
         Long idCocheExistente = 1L;
-        ResponseEntity<Coche> respuestaExistente = restTemplate.getForEntity("http://localhost:" + port + "/coches/" + idCocheExistente, Coche.class);
+        ResponseEntity<Coche> respuestaExistente = restTemplate.getForEntity("http://localhost:" + port + "/api/v1/coche/" + idCocheExistente, Coche.class);
         assertEquals(HttpStatus.OK, respuestaExistente.getStatusCode());
         assertNotNull(respuestaExistente.getBody());
 
@@ -70,7 +70,7 @@ public class CocheControladorTest {
         cocheModificado.setModelo("CocheModificado");
         HttpEntity<Coche> entidadModificada = new HttpEntity<>(cocheModificado);
         ResponseEntity<Coche> respuestaModificada = restTemplate.exchange(
-                "http://localhost:" + port + "/coches/" + idCocheExistente,
+                "http://localhost:" + port + "/api/v1/coche/" + idCocheExistente,
                 HttpMethod.PUT,
                 entidadModificada,
                 Coche.class);
@@ -82,12 +82,12 @@ public class CocheControladorTest {
 
     @Test
     public void pruebaEliminarCoche() {
-        // Supongamos que hay un coche con ID 1 en la base de datos
+        // Coche con ID 1
         Long idCocheExistente = 1L;
 
         // Intenta eliminar el coche
         ResponseEntity<Void> respuesta = restTemplate.exchange(
-                "http://localhost:" + port + "/coches/" + idCocheExistente,
+                "http://localhost:" + port + "/api/v1/coche/" + idCocheExistente,
                 HttpMethod.DELETE,
                 null,
                 Void.class);
