@@ -1,5 +1,6 @@
 package com.example.concesionario.entidad;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,36 +13,47 @@ public class Coche {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
 
 	@NotBlank(message = "La marca no puede estar en blanco")
+	@Column(name = "marca", nullable = false)
 	private String marca;
 
 	@NotBlank(message = "El modelo no puede estar en blanco")
+	@Column(name = "modelo", nullable = false)
 	private String modelo;
 
 	@NotNull(message = "El año no puede ser nulo")
+	@Column(name = "anyo", nullable = false)
 	private Integer anyo;
 
 	@NotNull(message = "La potencia no puede ser nula")
+	@Column(name = "potencia", nullable = false)
 	private Integer potencia;
 
-	@NotNull(message = "El kilómetraje no pueden ser nulo")
+	@NotNull(message = "El kilometraje no puede ser nulo")
+	@Column(name = "kilometraje", nullable = false)
 	private Integer kilometraje;
 
-	@NotNull(message = "El peso no pueden ser nulo")
+	@NotNull(message = "El peso no puede ser nulo")
+	@Column(name = "peso", nullable = false)
 	private Integer peso;
 
-	@NotNull(message = "El combustible no pueden ser nulo")
+	@NotNull(message = "El combustible no puede ser nulo")
+	@Column(name = "combustible", nullable = false)
 	private String combustible;
 
-	@NotNull(message = "El color no pueden ser nulo")
+	@NotNull(message = "El color no puede ser nulo")
+	@Column(name = "color", nullable = false)
 	private String color;
 
-	@NotNull(message = "El precio no pueden ser nulo")
+	@NotNull(message = "El precio no puede ser nulo")
+	@Column(name = "precio", nullable = false)
 	private Integer precio;
 
-	@NotNull(message = "La descripcion no pueden estar vacío")
+	@NotNull(message = "La descripción no puede estar vacía")
+	@Column(name = "descripcion", nullable = false)
 	private String descripcion;
 
 	public Coche() {

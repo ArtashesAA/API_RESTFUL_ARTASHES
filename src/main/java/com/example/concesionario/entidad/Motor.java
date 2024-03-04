@@ -1,5 +1,6 @@
 package com.example.concesionario.entidad;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,25 +13,33 @@ public class Motor {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
 
 	@NotBlank(message = "El nombre no puede estar en blanco")
+	@Column(name = "nombre", nullable = false)
 	private String nombre;
 
-	@NotBlank(message = "El fabircante no puede estar en blanco")
+	@NotBlank(message = "El fabricante no puede estar en blanco")
+	@Column(name = "fabricante", nullable = false)
 	private String fabricante;
 
-	@NotNull(message = "El anyo de fabricacion no puede ser nulo")
+	@NotNull(message = "El año de fabricación no puede ser nulo")
+	@Column(name = "anyoFabricacion", nullable = false)
 	private Integer anyoFabricacion;
 
-	@NotBlank(message = "El tipo de combustible no puede estar ser nulo")
+	@NotBlank(message = "El tipo de combustible no puede estar en blanco")
+	@Column(name = "tipoCombustible", nullable = false)
 	private String tipoCombustible;
 
 	@NotNull(message = "El consumo no puede ser nulo")
+	@Column(name = "consumo", nullable = false)
 	private Double consumo;
 
-	@NotNull(message = "La vida util no puede ser nula")
+	@NotNull(message = "La vida útil no puede ser nula")
+	@Column(name = "vidaUtil", nullable = false)
 	private Integer vidaUtil;
+
 
 	public Motor() {
 
