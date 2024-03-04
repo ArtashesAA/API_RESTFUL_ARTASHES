@@ -1,6 +1,7 @@
 package com.example.concesionario.entidad;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,12 +16,21 @@ import java.util.List;
 public class Usuario implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Integer id;
+
+	@NotBlank(message = "El email no puede estar en blanco")
+	@Column(name = "email", nullable = false, unique = true, columnDefinition = "VARCHAR(255)")
 	private String email;
+
+	@NotBlank(message = "La contraseña no puede estar en blanco")
+	@Column(name = "password", nullable = false, columnDefinition = "VARCHAR(255)")
 	private String password;
+
+	@Column(name = "role", nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'USER'")
 	private String role;
 
 	@Override
