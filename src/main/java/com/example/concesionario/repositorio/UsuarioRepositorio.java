@@ -7,5 +7,5 @@ import com.example.concesionario.entidad.Usuario;
 import java.util.Optional;
 
 public interface UsuarioRepositorio extends JpaRepository<Usuario, Integer> {
-    Optional<Usuario> findByEmail(String email);
+	Optional<Usuario> findByEmail(String email);
 }

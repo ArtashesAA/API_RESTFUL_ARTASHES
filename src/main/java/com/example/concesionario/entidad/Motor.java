@@ -40,7 +40,6 @@ public class Motor {
 	@Column(name = "vidaUtil", nullable = false)
 	private Integer vidaUtil;
 
-
 	public Motor() {
 
 	}
