@@ -3,6 +3,8 @@ package com.example.concesionario.controlador;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +32,9 @@ public class CocheControlador {
 	 */
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@GetMapping
-	public List<Coche> getAllCoches() {
-		return cocheRepositorio.findAll();
+	public ResponseEntity<List<Coche>> getAllCoches() {
+		List<Coche> coches = cocheRepositorio.findAll();
+		return new ResponseEntity<>(coches, HttpStatus.OK);
 	}
 
 	/*
@@ -43,8 +46,13 @@ public class CocheControlador {
 	 */
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@GetMapping("/{id}")
-	public Coche getCocheById(@PathVariable Long id) {
-		return cocheRepositorio.findById(id).orElse(null);
+	public ResponseEntity<Coche> getCocheById(@PathVariable Long id) {
+		Coche coche = cocheRepositorio.findById(id).orElse(null);
+		if (coche != null) {
+			return new ResponseEntity<>(coche, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	/*
@@ -56,8 +64,9 @@ public class CocheControlador {
 	 */
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
-	public Coche addCoche(@RequestBody Coche coche) {
-		return cocheRepositorio.save(coche);
+	public ResponseEntity<Coche> addCoche(@RequestBody Coche coche) {
+		Coche nuevoCoche = cocheRepositorio.save(coche);
+		return new ResponseEntity<>(nuevoCoche, HttpStatus.CREATED);
 	}
 
 	/*
@@ -72,7 +81,7 @@ public class CocheControlador {
 	 */
 	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/{id}")
-	public Coche updateCoche(@PathVariable Long id, @RequestBody Coche nuevoCoche) {
+	public ResponseEntity<Coche> updateCoche(@PathVariable Long id, @RequestBody Coche nuevoCoche) {
 		Coche cocheExistente = cocheRepositorio.findById(id).orElse(null);
 		if (cocheExistente != null) {
 			cocheExistente.setMarca(nuevoCoche.getMarca());
@@ -84,9 +93,11 @@ public class CocheControlador {
 			cocheExistente.setPrecio(nuevoCoche.getPrecio());
 			cocheExistente.setDescripcion(nuevoCoche.getDescripcion());
 
-			return cocheRepositorio.save(cocheExistente);
+			Coche cocheActualizado = cocheRepositorio.save(cocheExistente);
+			return new ResponseEntity<>(cocheActualizado, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return null;
 	}
 
 	/*
@@ -96,8 +107,13 @@ public class CocheControlador {
 	 */
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}")
-	public void deleteCoche(@PathVariable Long id) {
-		cocheRepositorio.deleteById(id);
+	public ResponseEntity<String> deleteCoche(@PathVariable Long id) {
+		try {
+			cocheRepositorio.deleteById(id);
+			return new ResponseEntity<>("Coche con ID " + id + " borrado correctamente", HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>("Error al borrar el coche con ID " + id, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 }
