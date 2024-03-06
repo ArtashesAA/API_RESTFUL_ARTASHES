@@ -30,8 +30,8 @@ public class AuthService {
 			Usuario usuarios = new Usuario();
 			usuarios.setEmail(registrationRequest.getEmail());
 			usuarios.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-			
-			//Por defecto se registra como usuario normal
+
+			// Por defecto se registra como usuario normal
 			usuarios.setRole("USER");
 			Usuario usuarioResult = usuarioRepositorio.save(usuarios);
 			if (usuarioResult != null && usuarioResult.getId() > 0) {

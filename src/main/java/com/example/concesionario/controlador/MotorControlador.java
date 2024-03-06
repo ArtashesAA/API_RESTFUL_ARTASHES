@@ -3,6 +3,7 @@ package com.example.concesionario.controlador;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,8 +34,9 @@ public class MotorControlador {
 	 */
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@GetMapping
-	public List<Motor> obtenerTodosLosMotores() {
-		return motorRepositorio.findAll();
+	public ResponseEntity<List<Motor>> obtenerTodosLosMotores() {
+		List<Motor> motores = motorRepositorio.findAll();
+		return new ResponseEntity<>(motores, HttpStatus.OK);
 	}
 
 	/*
@@ -47,7 +49,8 @@ public class MotorControlador {
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@GetMapping("/{id}")
 	public ResponseEntity<Motor> obtenerMotorPorId(@PathVariable Long id) {
-		return motorRepositorio.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+		return motorRepositorio.findById(id).map(motor -> new ResponseEntity<>(motor, HttpStatus.OK))
+				.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
 	/*
@@ -59,9 +62,9 @@ public class MotorControlador {
 	 */
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
-	public Motor crearMotor(@Valid @RequestBody Motor motor) {
-
-		return motorRepositorio.save(motor);
+	public ResponseEntity<Motor> crearMotor(@Valid @RequestBody Motor motor) {
+		Motor nuevoMotor = motorRepositorio.save(motor);
+		return new ResponseEntity<>(nuevoMotor, HttpStatus.CREATED);
 	}
 
 	/*
@@ -83,8 +86,9 @@ public class MotorControlador {
 			motorExistente.setConsumo(motorActualizado.getConsumo());
 			motorExistente.setVidaUtil(motorActualizado.getVidaUtil());
 
-			return ResponseEntity.ok(motorRepositorio.save(motorExistente));
-		}).orElse(ResponseEntity.notFound().build());
+			Motor motorActualizadoResult = motorRepositorio.save(motorExistente);
+			return new ResponseEntity<>(motorActualizadoResult, HttpStatus.OK);
+		}).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
 	/*
@@ -95,9 +99,11 @@ public class MotorControlador {
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> eliminarMotor(@PathVariable Long id) {
-		return motorRepositorio.findById(id).map(motor -> {
-			motorRepositorio.delete(motor);
-			return ResponseEntity.ok().build();
-		}).orElse(ResponseEntity.notFound().build());
+		try {
+			motorRepositorio.deleteById(id);
+			return new ResponseEntity<>("Motor con ID " + id + " borrado correctamente", HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>("Error al borrar el motor con ID " + id, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
