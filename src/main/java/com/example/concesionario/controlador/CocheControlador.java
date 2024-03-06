@@ -3,6 +3,8 @@ package com.example.concesionario.controlador;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,46 +27,61 @@ public class CocheControlador {
 
 	/*
 	 * Recupera todos los coches. Puede acceder cualquier rol
+	 * 
 	 * @return recupera todos los coches
 	 */
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@GetMapping
-	public List<Coche> getAllCoches() {
-		return cocheRepositorio.findAll();
+	public ResponseEntity<List<Coche>> getAllCoches() {
+		List<Coche> coches = cocheRepositorio.findAll();
+		return new ResponseEntity<>(coches, HttpStatus.OK);
 	}
 
 	/*
 	 * Recupera un coche por id. Puede acceder cualquier rol
+	 * 
 	 * @Parameter id de coche que se va a buscar
+	 * 
 	 * @return recupera el coche por id
 	 */
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@GetMapping("/{id}")
-	public Coche getCocheById(@PathVariable Long id) {
-		return cocheRepositorio.findById(id).orElse(null);
+	public ResponseEntity<Coche> getCocheById(@PathVariable Long id) {
+		Coche coche = cocheRepositorio.findById(id).orElse(null);
+		if (coche != null) {
+			return new ResponseEntity<>(coche, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	/*
 	 * Añade un coche a la bbdd. Puede acceder solo el admin
+	 * 
 	 * @Parameter coche que se va a añadir
+	 * 
 	 * @return guarda el coche pasado por parámetro
 	 */
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
-	public Coche addCoche(@RequestBody Coche coche) {
-		return cocheRepositorio.save(coche);
+	public ResponseEntity<Coche> addCoche(@RequestBody Coche coche) {
+		Coche nuevoCoche = cocheRepositorio.save(coche);
+		return new ResponseEntity<>(nuevoCoche, HttpStatus.CREATED);
 	}
 
-	
 	/*
 	 * Actualiza un coche de la bbdd. Puede acceder solo el admin
+	 * 
 	 * @Parameter id del coche que se quiere actualizar
-	 * @Parameter nuevoCoche que contiene los datos del coche nuevo que va a sustituir al otro
-	 * @return actualiza el coche pasado por parámetro 
+	 * 
+	 * @Parameter nuevoCoche que contiene los datos del coche nuevo que va a
+	 * sustituir al otro
+	 * 
+	 * @return actualiza el coche pasado por parámetro
 	 */
 	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/{id}")
-	public Coche updateCoche(@PathVariable Long id, @RequestBody Coche nuevoCoche) {
+	public ResponseEntity<Coche> updateCoche(@PathVariable Long id, @RequestBody Coche nuevoCoche) {
 		Coche cocheExistente = cocheRepositorio.findById(id).orElse(null);
 		if (cocheExistente != null) {
 			cocheExistente.setMarca(nuevoCoche.getMarca());
@@ -76,20 +93,27 @@ public class CocheControlador {
 			cocheExistente.setPrecio(nuevoCoche.getPrecio());
 			cocheExistente.setDescripcion(nuevoCoche.getDescripcion());
 
-			return cocheRepositorio.save(cocheExistente);
+			Coche cocheActualizado = cocheRepositorio.save(cocheExistente);
+			return new ResponseEntity<>(cocheActualizado, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return null;
 	}
 
-	
 	/*
 	 * Borra un coche a la bbdd. Puede acceder solo el admin
+	 * 
 	 * @Parameter id del coche que se quiere borrar
 	 */
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}")
-	public void deleteCoche(@PathVariable Long id) {
-		cocheRepositorio.deleteById(id);
+	public ResponseEntity<String> deleteCoche(@PathVariable Long id) {
+		try {
+			cocheRepositorio.deleteById(id);
+			return new ResponseEntity<>("Coche con ID " + id + " borrado correctamente", HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>("Error al borrar el coche con ID " + id, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 }

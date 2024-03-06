@@ -11,10 +11,11 @@ import com.example.concesionario.repositorio.UsuarioRepositorio;
 @Service
 public class UsuarioService implements UserDetailsService {
 
-    @Autowired
-    private UsuarioRepositorio ourUserRepo;
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return ourUserRepo.findByEmail(username).orElseThrow();
-    }
+	@Autowired
+	private UsuarioRepositorio ourUserRepo;
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		return ourUserRepo.findByEmail(username).orElseThrow();
+	}
 }
